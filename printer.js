@@ -201,7 +201,7 @@ function renderSlip(rec, opt){
   const wide = opt.paper === "80";
   const F = {
     name: pt(wide ? 13 : 11.5), val: pt(wide ? 11 : 10), lbl: pt(wide ? 9 : 7.5),
-    vm: pt(wide ? 9.5 : 8.5), gp: pt(wide ? 7.5 : 7), ty: pt(wide ? 9 : 8)
+    vm: pt(wide ? 9.5 : 8.5), gp: pt(wide ? 7.5 : 7), ty: pt(wide ? 9 : 8), hd: pt(wide ? 15 : 13)
   };
   const padX = Math.round(mm * 0.5);
   const lblW = Math.round(mm * (wide ? 31 : 21));
@@ -215,16 +215,27 @@ function renderSlip(rec, opt){
   ctx.fillStyle = "#000"; ctx.textBaseline = "alphabetic";
 
   let y = Math.round(mm * 1);
+  // heading: मतदाता पर्ची (bold, centred)
+  {
+    ctx.font = `800 ${F.hd}px ${SLIP_FONT}`;
+    const t = "मतदाता पर्ची", w = ctx.measureText(t).width;
+    y += Math.round(F.hd * 1.1);
+    ctx.fillText(t, Math.round((W - w) / 2), y);
+    y += Math.round(F.hd * 0.35);
+    ctx.fillRect(padX, y, W - 2 * padX, Math.max(2, Math.round(mm * 0.3)));
+    y += Math.round(mm * 1.2);
+  }
   const rows = opt.test ? [
     ["NAME:", "TEST PRINT परीक्षण", "name"],
     ["FATHER/HUSBAND NAME:", "हिंदी अक्षर: क्ष त्र ज्ञ श्र ऋ ॐ ड़ ढ़"],
-    ["EPIC:", "ABC1234567"],
-    ["SN:", "123"], ["WARD:", "4"], ["CASTE:", "जाति"], ["BOOTH NO.:", "74"]
+    ["WARD:", "4"], ["GENDER:", "पुरूष"], ["AGE:", "45"], ["CASTE:", "जाति"],
+    ["S.N.:", "123"], ["EPIC:", "ABC1234567"], ["BOOTH NO.:", "74"]
   ] : [
     ["NAME:", rec.name, "name"],
     ["FATHER/HUSBAND NAME:", rec.father],
-    ["EPIC:", rec.epic], ["SN:", rec.sn], ["WARD:", rec.ward],
-    ["CASTE:", rec.caste], ["BOOTH NO.:", rec.booth]
+    ["WARD:", rec.ward], ["GENDER:", rec.gender], ["AGE:", rec.age],
+    ["CASTE:", rec.caste], ["S.N.:", rec.sn], ["EPIC:", rec.epic],
+    ["BOOTH NO.:", rec.booth]
   ];
   for (const [label, value, kind] of rows){
     const vSize = kind === "name" ? F.name : F.val;
@@ -255,7 +266,6 @@ function renderSlip(rec, opt){
   };
   center("वन्दे मातरम्", F.vm, 700);
   center("ग्राम पंचायत मेवानगर", F.gp, 700);
-  center("THANK YOU", F.ty, 700, Math.round(mm * 0.3) + "px");
   if (opt.test){
     y += Math.round(mm * 1.5);
     ctx.fillRect(0, y, W, 2); ctx.fillRect(0, y, 2, mm * 4); ctx.fillRect(W - 2, y, 2, mm * 4);

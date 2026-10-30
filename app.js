@@ -1,10 +1,10 @@
 /* Mewanagar Voter Slip — app logic (search, storage, screens, printing flow).
    All data stays in this browser on the phone. Nothing is sent to any server. */
 "use strict";
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.1.0";
 
 const FIELDS = ["ward","sn","name","father","epic","caste","booth"];
-const LABEL = {ward:"Ward",sn:"SN",name:"Name",father:"Father/Husband Name",epic:"EPIC",caste:"Caste",booth:"Booth No."};
+const LABEL = {ward:"Ward",sn:"SN",name:"Name",father:"Father/Husband Name",epic:"EPIC",caste:"Caste",booth:"Booth No.",gender:"Gender",age:"Age"};
 const FLAG_RE = /^\s*(death|dead|shifted|repetition|repeat|deleted|expired|duplicate|मृत|स्थानांतरित)/i;
 const MAX_SHOW = 100;
 const voters = n => `${n.toLocaleString("en-IN")} voter${n === 1 ? "" : "s"}`;
@@ -354,6 +354,7 @@ function renderMap(){
       <label>Sheet<select id="mapSheet">${SHEETS.map((s, i) => `<option value="${i}" ${i === MAP.sheetIdx ? "selected" : ""}>${esc(s.name)} (${s.rows.length} rows)</option>`).join("")}</select></label>
       <label>Heading row<select id="mapHead">${sheet.rows.slice(0, 15).map((r, k) => `<option value="${k}" ${k === MAP.headerIdx ? "selected" : ""}>Row ${r.rn}: ${esc(Array.from(r.cells, clean).filter(Boolean).slice(0, 3).join(" | ").slice(0, 40))}</option>`).join("")}</select></label>
       ${FIELDS.map(f => `<label>${LABEL[f]}<select data-f="${f}" class="${MAP.cols[f] === undefined ? "miss" : ""}">${opts(MAP.cols[f])}</select></label>`).join("")}
+      ${["gender","age"].map(f => `<label>${f === "age" ? "Age" : "Gender"}<select data-f="${f}">${opts(MAP.cols[f])}</select></label>`).join("")}
     </div>
     <div class="btnrow"><button class="btn primary" id="mapApply">Apply</button><button class="btn" id="mapCancel">Cancel</button></div>`;
   for (const sel of $("mapBody").querySelectorAll("select[data-f]")) sel.onchange = () => sel.classList.toggle("miss", sel.value === "");
