@@ -1,7 +1,7 @@
 /* Mewanagar Voter Slip — app logic (search, storage, screens, printing flow).
    All data stays in this browser on the phone. Nothing is sent to any server. */
 "use strict";
-const APP_VERSION = "1.1.0";
+const APP_VERSION = "1.2.0";
 
 const FIELDS = ["ward","sn","name","father","epic","caste","booth"];
 const LABEL = {ward:"Ward",sn:"SN",name:"Name",father:"Father/Husband Name",epic:"EPIC",caste:"Caste",booth:"Booth No.",gender:"Gender",age:"Age"};
@@ -467,6 +467,7 @@ function bindSeg(id, key, after){
    Start-up
    ===================================================================== */
 async function init(){
+  await SYMBOL_READY;
   try{ Object.assign(settings, JSON.parse(lsGet("settings") || "{}")); }catch(e){}
   $("verLine").textContent = `Version ${APP_VERSION}`;
   bindSeg("segPaper","paper"); bindSeg("segDots","dots"); bindSeg("segSize","size"); bindSeg("segMode","mode");

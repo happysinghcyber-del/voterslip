@@ -167,6 +167,19 @@ class BlePrinter extends EventTarget {
    Slip image: draws the slip on a canvas at the printer's dot width
    (8 dots per mm, the usual 203 dpi), then makes it pure black & white.
    ===================================================================== */
+/* ---- Election details printed on every slip (change here if needed) ---- */
+const BALLOT_NO = "7";
+const SYMBOL_NAME = "भिंडी";
+/* Election symbol (भिंडी) as black-and-white pictures sized for 80 mm and 58 mm printers */
+const SYMBOL_SRC = {
+  s80: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH8AAACwAQAAAAAOeIzfAAAFUElEQVR42m2Wv28cxxXHPzM38G4Q5Th2RQEH3gp2kdJwdRYIcQOwyJ9BxClSxWcnhQQo5JA2YFUmXQYwHP0PaVIY4iohpCuCKOkNYnU6g6niPdIAh854nou9H3Nnb3N333v75jtv3vt+B1k+xyISlbB4cg+il7/bv1qgAKBcANIs49oI3+ZYAuV6xFfrQPtUC0DZ9YhzgNjCIiLymYhI+IuIxDbi+ieThgTY/RFTB6gE0NWCf7JbnQCqBpoECENgkgB2AIwAznTKAXjSUr96KSL9YxGZM91wSAFgZ8Ctx8SyBHljBuimZRbfmgHKE1z71wkA04BXn0P4NR0RkavqTWnoiEy/aEt2xVSaLSUy3dI44Pueo0MJl4V2jwF+k0HxNrxC7/0XoKpoyKEqtd0GUMYRgdcwt86BDjUdPJyMtb52EOsjwCE9tPq2AlxTUcJ3JZqjGjIUNRp/iObdBmgGdQT+49H07oOpcHmAZ6DpbgO+1+AaeaTRZFttqStFfBs0HAO1HdzChBFoTO5QIQJwA0jc3hF58+bi9vRi6v4QNUrX0EiA+vLzx2h4+TvYx24CHdDg7kJu/oTOX/UbNDR9RwManpUtg80TROclEPdA5EXVkX/GwXuvXmyGq2iAUsGhcZzeDmDgenMPqA2gmp9riG/hvoM9uu940BD+fgbVEYTf6gkaisNxVdCM6hua0Ww8agXgRhNAZLxzfHzRf7HxotN/3o8aVD0g4C0dRqDBDBngCkdebBRowPd6lkDVLfdLNISyCw2NhIOi3Vwv61LaslsQHAZ+ochuiD68G9vt558Yhwc+DA8AkTCI2w+e31y8/g9/JVGDNg4KCZfmpi2cGj8dnwasGTWTdpVhrWpMzE/0bIAUQ2M52GAyAgMMhoMh5IUa2TaiGMC+5l6JayMCvbt/5ezLrH+njej2bAHcl2IxlTGcKhQz6mTdzBr0Zdx2raD4Gz/dlq3Me5GIiIT74UHv4IuNZjpXGIOAQl3Okurq6OyIxl4uZl/DsILJhJaYqp+OobRVPliKkloRx0M+8LVvTk7mQFMD7PSLWQ5K+8uHveJrmAO+gQZ/rzMHoIAQHmZzoMjDvS53fLZUOou3rdQZgFDEfhb1ZXceYUNOwE4S+RTr8kSTowVLTHQ9mkdROFkkzYER2VIzRTRiErMAzmrcci8GhXHGJRFuPP/Wfji4pFpGaF190NJKhP5GpSL9lNLVSYSi9sHVy71QU5SNS3MMQyzV6rKFT4W+KS1QJ7bmo/TKFePLbespc/foCZ+mTAPkMwdtT85iwvPWT1ogwsczwzAzH9VMbFJCEaoV6sahdfTJXswhvlq1tZcqT7wMXblQr9pa05VkWaY17nq1yOW1CQkPP/S7f0tPrigLj02Ang/6PMkRY487SUvBDjZM0wLl3Wh/f54Qs5/kbc/NfH9qB35a/Xnp+/oN43LTLF/55uvx2UHvNCnQToPRyebOn/1/XH37ZRJxKwxRSYEqCqXzr9wCyDfjoD49SvrjHek5k/r+BDdlv1o0P+Xuv8rxr5bL3snJPKf9xURxQl0cpo1b1H98mDRd0KW5++/SNWkH9c6TlvK5U5L7pD9+FrHvF+0tRkSk7gTlzy7qbCZsUmfho7D7Xp3NS1jnWH1ubUgOu1H/e7Ic9coCvl4eAzshk0e3Q2dxDGWA7W/Wrl9b6Dh7JSI+k6mJav6KghzhMJVPyPdxKznMk0rP9dQA6Jdxd9EO4vsi9JftMKO/dg18tEKsgO10Xl4rYSsse0xERGq1lvT19btldrAGmMotB6gdM1mNUD+69Lp1YG8d2CyBHwA3LomOmFwNIAAAAABJRU5ErkJggg==",
+  s58: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGgAAACQAQAAAADMphN4AAAEG0lEQVR42lWV32scVRTHP3N2yE5lSKYV7KaGZmqFiE/bFiWV1I6l0EJBwT9AViLoY5Q+tFLSSSwKoml8FB+6UHz3D5B0UgVTkDaPgqWdSmCj+GO6CXR2O73Hh/m1GbgPnznn3jPnzjnfg5bPtKoK5ZMAAtAFNABQVZ1QVfNO6ZmW3gLgA2yWxB7b33so3EOmWHmEO6qa3Sgj6B7PrFhFvBAsvyQB0rAkKxp5jRvDbgf6+ZctQAz8l9MsbABxTofAA5ycDoZ027Cekx0pwJdcV9WdeNpwTvUoTVXdadzIaKqZkSGgXsLbGeaVRhgFpOmFg38+fU9flSDKk/HaZJtybBOk0cqAAdK8BIAF9EOx74MVfYVZYMsXuQtjAl2b84jVA1gDdCIQLoY03neGYDoIb0TAQ2A3xOZIDAtfKyQrluAuIAGc2o67CGYWOH4R3G0E5xD8BvDjfQQ9GFqka7DfgGbZtM703MG9E/FVgcY2bsbwXrKFwOUBHW8Vc/Y5BNluAc/gowiBnh2OmYQsGgc1Eyunvx3c2flmelYFOBlDuntg2kIg9cMTDWGeWQSmsgR8zJsCao49/uXXbL7nZj0VOOf4suzhZjECP2sG9CYHDoIVX1tpsWbOSITAJ7cda93JLiYeAifjW4AV2yECU0tbIfPDjZ6PgJcsuzGRFwUImNkkCrnWHQcbmr7zPcebdH9CwM5aMYyfzvLKWsk+b1v+4kkQEMdrkz5jObfdMuCnWQI2WLbzYoN3B3Zu63wG2LKdk+DiOrsR2EC7u7uzGsRebrNwPNjo5rbUip4aJoq69ju2cVqLQU4ZHQf1w5y8hBgzV3ZA0G9odrkgQ5DYnhTktAZg7VZ960soMWApDP/iZvr0hYXc1vA8Iry6w0/l8mADjMGjYbPu8MOhHRQkqkXTC4Bt046r3oy4znJps2S5EJUigtNNKorXoyyoaAl704pqzziXEBug3dHvWiOn8LA+M02O2XQqDQlIrozoSypedYpnc+mfUZWy1ipyMnfOaZfU8DCdOt6iGdEscZzpndp2C+ocsBsHLrVK5TNTV/ovf1ipcJ8vHtTRl26zWu9LY/03KvcNGjfm7sxU+/yE1C09B2b2j5tVtsz4YVYp7ZYzv3L8+WqfN/6Web30vD+5ke6Lyptwkif+w7SoCZbWL/z+2gdaeHrnP3XrbD/2pqJ+FeHI5NHJu1zNI+gj34RWfS9B70Sr9MwYuGd74eniW/bpmQdh6ZkNh+uJG9R/07sa+XEh+DY8qWvJMcyNlfWZeHA4IckpBn9cnZFZta+eJEFCI7SLbKPwUcBaWtgCQKKyVyzAMusFvQSwyg85TQHMxkGRu8aq0UR1u/uL+Ug5bvvN0XnbzEbnpi6Wdw3wzNYRm4zWNdYeIhqNoImq/g87Od4OI+F+ogAAAABJRU5ErkJggg=="
+};
+const SYMBOL = {};
+const SYMBOL_READY = Promise.all(Object.entries(SYMBOL_SRC).map(([k, src]) => new Promise(res => {
+  const im = new Image(); im.onload = () => { SYMBOL[k] = im; res(); }; im.onerror = () => res(); im.src = src;
+})));
+
 const SLIP_FONT = '"Noto Sans Devanagari","Nirmala UI","Mangal",Roboto,Arial,sans-serif';
 const graphemes = s => (typeof Intl !== "undefined" && Intl.Segmenter)
   ? Array.from(new Intl.Segmenter("hi", {granularity: "grapheme"}).segment(s), x => x.segment)
@@ -255,6 +268,28 @@ function renderSlip(rec, opt){
   y += Math.round(mm * 0.6);
   ctx.fillRect(padX, y, W - 2 * padX, Math.max(2, Math.round(mm * 0.3)));
   y += Math.round(mm * 1.2);
+  // ---- ballot number + election symbol ----
+  {
+    const sym = SYMBOL[wide ? "s80" : "s58"] || SYMBOL.s80 || null;
+    const iw = sym ? sym.naturalWidth : 0, ih = sym ? sym.naturalHeight : 0;
+    const gapI = Math.round(mm * 3);
+    const maxTW = W - 2 * padX - (sym ? iw + gapI : 0);
+    const t1 = `BALLOT NO.: ${BALLOT_NO}`, t2 = `चुनाव चिन्ह: ${SYMBOL_NAME}`;
+    let s1 = F.hd, s2 = F.name;
+    const widthAt = (t, sz) => { ctx.font = `800 ${sz}px ${SLIP_FONT}`; return ctx.measureText(t).width; };
+    while ((widthAt(t1, s1) > maxTW || widthAt(t2, s2) > maxTW) && s2 > 10){ s1 = Math.round(s1 * 0.93); s2 = Math.round(s2 * 0.93); }
+    const tw = Math.max(widthAt(t1, s1), widthAt(t2, s2));
+    const th = Math.round(s1 * 1.25 + s2 * 1.45);
+    const blockH = Math.max(ih, th);
+    const x0 = Math.round((W - (tw + (sym ? gapI + iw : 0))) / 2);
+    let ty = y + Math.round((blockH - th) / 2);
+    ctx.font = `800 ${s1}px ${SLIP_FONT}`; ty += Math.round(s1 * 1.0); ctx.fillText(t1, x0, ty);
+    ctx.font = `800 ${s2}px ${SLIP_FONT}`; ty += Math.round(s2 * 1.4); ctx.fillText(t2, x0, ty);
+    if (sym){ ctx.imageSmoothingEnabled = false; ctx.drawImage(sym, x0 + tw + gapI, y + Math.round((blockH - ih) / 2)); }
+    y += blockH + Math.round(mm * 1.2);
+    ctx.fillRect(padX, y, W - 2 * padX, Math.max(2, Math.round(mm * 0.3)));
+    y += Math.round(mm * 1.2);
+  }
   const center = (txt, size, weight, spacing) => {
     ctx.font = `${weight} ${size}px ${SLIP_FONT}`;
     if ("letterSpacing" in ctx) ctx.letterSpacing = spacing || "0px";
