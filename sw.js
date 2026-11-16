@@ -1,6 +1,6 @@
 /* Offline support: keeps the app files on the phone so it opens without internet.
    Voter data is NOT stored here — it lives in IndexedDB and never leaves the phone. */
-const CACHE = "mewanagar-voter-slip-v1.2.0";
+const CACHE = "mewanagar-voter-slip-v1.3.0";
 const FILES = ["./", "index.html", "style.css", "xlsx.js", "printer.js", "app.js", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
